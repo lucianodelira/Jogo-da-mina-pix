@@ -174,14 +174,22 @@
   let prizeIndex, attempts, clickedCells, credits, paymentId;
 
   // Inicializar sons
-  const clickSound = new Audio('https://raw.githubusercontent.com/lucianodelira/Jogo-da-mina-pix/main/sons/click.wav');
-const loseSound = new Audio('https://raw.githubusercontent.com/lucianodelira/Jogo-da-mina-pix/main/sons/lose.wav');
-const backgroundMusic = new Audio('https://github.com/lucianodelira/Jogo-da-mina-pix/blob/e28e8f0d9d748815331c5743c93486e775feda64/sons/background.wav');
+ const clickSound = new Audio('https://raw.githubusercontent.com/lucianodelira/Jogo-da-mina-pix/e28e8f0d9d748815331c5743c93486e775feda64/sons/click.wav');
+const loseSound = new Audio('https://raw.githubusercontent.com/lucianodelira/Jogo-da-mina-pix/e28e8f0d9d748815331c5743c93486e775feda64/sons/lose.wav');
+const backgroundMusic = new Audio('https://raw.githubusercontent.com/lucianodelira/Jogo-da-mina-pix/e28e8f0d9d748815331c5743c93486e775feda64/sons/background.wav');
 
   backgroundMusic.loop = true;
   backgroundMusic.volume = 0.1; // Volume baixo (10%)
   backgroundMusic.play().catch(error => console.error("Erro ao tocar música de fundo:", error));
 
+document.addEventListener('click', () => {
+  backgroundMusic.play().catch(err => {
+    console.warn("Música não pôde ser tocada automaticamente:", err);
+  });
+}, { once: true });
+
+
+    
   // Atualiza o valor do prêmio e as tentativas no banner quando a opção do menu muda
   creditMenu.addEventListener("change", () => {
     const selectedOption = creditMenu.options[creditMenu.selectedIndex];
