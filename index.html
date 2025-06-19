@@ -179,8 +179,7 @@ const loseSound = new Audio('https://raw.githubusercontent.com/lucianodelira/Jog
 const backgroundMusic = new Audio('https://raw.githubusercontent.com/lucianodelira/Jogo-da-mina-pix/e28e8f0d9d748815331c5743c93486e775feda64/sons/background.wav');
 
   backgroundMusic.loop = true;
-  backgroundMusic.volume = 0.1; // Volume baixo (10%)
-  backgroundMusic.play().catch(error => console.error("Erro ao tocar música de fundo:", error));
+  backgroundMusic.volume = 0.4; // Volume baixo (40%)
 
 document.addEventListener('click', () => {
   backgroundMusic.play().catch(err => {
