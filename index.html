@@ -260,26 +260,40 @@
   });
 
   function resetGame() {
-    prizeIndex = Math.floor(Math.random() * totalCells);
-    clickedCells = new Set();
-    credits = 0;
-    paymentId = null;
-    localStorage.removeItem("lastPaymentId");
-    clearInterval(checkInterval);
-    board.innerHTML = "";
-    pixKeyInput.style.display = "none";
-    copyPixKeyButton.style.display = "none";
-    gameLiberado.style.display = "none";
-    loseMessage.style.display = "none";
-    winMessage.style.display = "none";
-    resetButton.style.display = "none";
-    pixButton.style.display = "inline-block";
-    creditMenu.style.display = "block";
-    gameTitle.style.display = "block";
-    gameDescription.style.display = "block";
-    gameInstructions.style.display = "block";
-    createBoard();
-  }
+  // Apagar localStorage, cookies e zerar variáveis
+  localStorage.clear();
+  document.cookie.split(";").forEach(function(c) {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
+
+  // Reset das variáveis
+  prizeIndex = Math.floor(Math.random() * totalCells);
+  clickedCells = new Set();
+  credits = 0;
+  paymentId = null;
+
+  // Parar checagem anterior (se existir)
+  clearInterval(checkInterval);
+
+  // Reset visual
+  board.innerHTML = "";
+  pixKeyInput.style.display = "none";
+  copyPixKeyButton.style.display = "none";
+  gameLiberado.style.display = "none";
+  loseMessage.style.display = "none";
+  winMessage.style.display = "none";
+  resetButton.style.display = "none";
+  pixButton.style.display = "inline-block";
+  creditMenu.style.display = "block";
+  gameTitle.style.display = "block";
+  gameDescription.style.display = "block";
+  gameInstructions.style.display = "block";
+
+  // Cria novo tabuleiro
+  createBoard();
+}
 
   function createBoard() {
     board.innerHTML = "";
@@ -344,31 +358,35 @@
   }
 
   pixButton.addEventListener("click", async () => {
-    const selectedOption = creditMenu.value;
+  localStorage.clear(); // Força novo início
+  paymentId = null;
 
-    try {
-      const response = await fetch(googleAppsScriptURL, {
-        method: "POST",
-        body: JSON.stringify({ action: "generatePix", creditOption: selectedOption }),
-      });
+  const selectedOption = creditMenu.value;
 
-      const data = await response.json();
+  try {
+    const response = await fetch(googleAppsScriptURL, {
+      method: "POST",
+      body: JSON.stringify({ action: "generatePix", creditOption: selectedOption }),
+    });
 
-      if (data.pixKey && data.paymentId) {
-        pixKeyInput.value = data.pixKey;
-        pixKeyInput.style.display = "block";
-        copyPixKeyButton.style.display = "block";
-        paymentId = data.paymentId;
-        localStorage.setItem("lastPaymentId", paymentId);
-        checkPayment();
-      } else {
-        alert("Erro ao gerar chave Pix. Tente novamente.");
-      }
-    } catch (error) {
-      console.error("Erro ao gerar Pix:", error);
-      alert("Falha ao gerar Pix. Verifique sua conexão.");
+    const data = await response.json();
+
+    if (data.pixKey && data.paymentId) {
+      pixKeyInput.value = data.pixKey;
+      pixKeyInput.style.display = "block";
+      copyPixKeyButton.style.display = "block";
+      paymentId = data.paymentId;
+      localStorage.setItem("lastPaymentId", paymentId);
+      checkPayment();
+    } else {
+      alert("Erro ao gerar chave Pix. Tente novamente.");
     }
-  });
+  } catch (error) {
+    console.error("Erro ao gerar Pix:", error);
+    alert("Falha ao gerar Pix. Verifique sua conexão.");
+  }
+});
+
 
   async function checkPayment() {
     if (!paymentId) {
